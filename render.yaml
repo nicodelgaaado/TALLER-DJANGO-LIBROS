@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: taller-django-libros-web
+    runtime: python
+    plan: free
+    region: virginia
+    rootDir: proyecto
+    buildCommand: bash build.sh
+    startCommand: gunicorn proyecto.wsgi:application
+    healthCheckPath: /
+    autoDeploy: false
+    envVars:
+      - key: DEBUG
+        value: "false"
+      - key: PYTHON_VERSION
+        value: 3.14.3
+      - key: WEB_CONCURRENCY
+        value: "2"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: taller-django-libros-db
+          property: connectionString
+
+databases:
+  - name: taller-django-libros-db
+    plan: free
+    region: virginia
+    databaseName: taller_django_libros
