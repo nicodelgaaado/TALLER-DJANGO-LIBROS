@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 
-from .forms import LibroForm
+from .forms import LibroForm, AutorForm
 from .models import Libro, Autor
 
 
@@ -82,7 +82,7 @@ class AutorListView(ListView):
 class AutorCreateView(CreateView):
     """Permite crear un nuevo autor en el sistema."""
     model = Autor
-    fields = ["nombre", "correo", "nacionalidad", "fecha_nacimiento", "biografia"]
+    form_class = AutorForm
     template_name = "gestion/autor_form.html"
     success_url = reverse_lazy("autor_list")
 
@@ -90,7 +90,7 @@ class AutorCreateView(CreateView):
 class AutorUpdateView(UpdateView):
     """Permite editar los datos de un autor existente."""
     model = Autor
-    fields = ["nombre", "correo", "nacionalidad", "fecha_nacimiento", "biografia"]
+    form_class = AutorForm
     template_name = "gestion/autor_form.html"
     success_url = reverse_lazy("autor_list")
 
