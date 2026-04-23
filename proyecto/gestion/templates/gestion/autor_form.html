@@ -1,0 +1,73 @@
+{% extends "gestion/base.html" %}
+
+{% block title %}
+  {% if form.instance.pk %}Editar autor{% else %}Crear autor{% endif %} | Biblioteca Nexus
+{% endblock %}
+{% block nav_autores_class %}is-active{% endblock %}
+{% block hero_title %}
+  {% if form.instance.pk %}Editar autor{% else %}Registrar nuevo autor{% endif %}
+{% endblock %}
+{% block hero_description %}
+  Completa la información del autor con una estructura clara, validaciones visibles y navegación directa de regreso al listado.
+{% endblock %}
+
+{% block content %}
+  <section class="form-layout">
+    <article class="panel panel--form">
+      <div class="panel__header panel__header--compact">
+        <div>
+          <span class="section-kicker">Formulario</span>
+          <h2>{% if form.instance.pk %}Actualiza la ficha del autor{% else %}Ingresa un nuevo autor{% endif %}</h2>
+          <p>Los campos obligatorios deben estar completos para guardar el registro correctamente.</p>
+        </div>
+      </div>
+
+      <form method="post" class="crud-form">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <div class="alert alert--error">
+            {% for error in form.non_field_errors %}
+              <div>{{ error }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <div class="field-grid">
+          {% for field in form %}
+            <div class="field-wrapper {% if field.name == 'biografia' %}field-wrapper--full{% endif %}">
+              <label class="field-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {{ field }}
+              {% if field.help_text %}
+                <p class="field-help">{{ field.help_text }}</p>
+              {% endif %}
+              {% if field.errors %}
+                <ul class="field-errors">
+                  {% for error in field.errors %}
+                    <li>{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="form-actions">
+          <button class="button button--primary" type="submit">Guardar autor</button>
+          <a class="button button--secondary" href="{% url 'lista_autores' %}">Cancelar</a>
+        </div>
+      </form>
+    </article>
+
+    <aside class="info-card">
+      <span class="badge badge--soft">Sugerencia</span>
+      <h3>Buenas prácticas para el registro</h3>
+      <p>Usa el correo real del autor para evitar duplicados y completa la biografía si quieres enriquecer el catálogo.</p>
+      <ul class="info-list">
+        <li>Nombre completo y legible.</li>
+        <li>Nacionalidad en formato corto.</li>
+        <li>Fecha de nacimiento exacta.</li>
+      </ul>
+    </aside>
+  </section>
+{% endblock %}

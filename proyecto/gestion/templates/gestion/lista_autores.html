@@ -1,0 +1,97 @@
+{% extends "gestion/base.html" %}
+
+{% block title %}Autores | Biblioteca Nexus{% endblock %}
+{% block nav_autores_class %}is-active{% endblock %}
+{% block hero_title %}Autores registrados{% endblock %}
+{% block hero_description %}Explora, crea, edita y elimina autores desde una interfaz clara y preparada para escritorio y móvil.{% endblock %}
+
+{% block content %}
+  <section class="stack">
+    <div class="stats-grid">
+      <article class="stat-card">
+        <span class="stat-card__label">Autores</span>
+        <strong>{{ total_autores }}</strong>
+        <p>Registros disponibles en el catálogo.</p>
+      </article>
+      <article class="stat-card">
+        <span class="stat-card__label">Libros enlazados</span>
+        <strong>{{ total_libros }}</strong>
+        <p>Obras relacionadas con los autores cargados.</p>
+      </article>
+    </div>
+
+    <section class="panel">
+      <div class="panel__header">
+        <div>
+          <span class="section-kicker">Listado</span>
+          <h2>Autores</h2>
+          <p>Consulta los datos principales y entra a cada acción del CRUD desde la misma tabla.</p>
+        </div>
+        <a class="button button--primary" href="{% url 'crear_autor' %}">Agregar autor</a>
+      </div>
+
+      {% if autores %}
+        <div class="table-shell">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Nacionalidad</th>
+                <th>Fecha de nacimiento</th>
+                <th>Biografía</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for autor in autores %}
+                <tr>
+                  <td data-label="Nombre">
+                    <div class="cell-title">{{ autor.nombre }}</div>
+                  </td>
+                  <td data-label="Correo">{{ autor.correo }}</td>
+                  <td data-label="Nacionalidad">
+                    <span class="badge badge--soft">{{ autor.nacionalidad }}</span>
+                  </td>
+                  <td data-label="Fecha de nacimiento">{{ autor.fecha_nacimiento|date:"d/m/Y" }}</td>
+                  <td data-label="Biografía">
+                    {% if autor.biografia %}
+                      {{ autor.biografia|truncatechars:88 }}
+                    {% else %}
+                      <span class="muted">Sin biografía registrada.</span>
+                    {% endif %}
+                  </td>
+                  <td data-label="Acciones">
+                    <div class="table-actions">
+                      <a class="button button--ghost" href="{% url 'editar_autor' autor.pk %}">Editar</a>
+                      <a class="button button--danger" href="{% url 'eliminar_autor' autor.pk %}">Eliminar</a>
+                    </div>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        {% if is_paginated %}
+          <div class="pagination">
+            {% if page_obj.has_previous %}
+              <a class="button button--ghost" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+            {% endif %}
+            <span class="badge badge--soft">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+            {% if page_obj.has_next %}
+              <a class="button button--ghost" href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+            {% endif %}
+          </div>
+        {% endif %}
+      {% else %}
+        <div class="empty-state">
+          <span class="badge badge--eyebrow">Sin registros</span>
+          <h3>Aún no hay autores cargados</h3>
+          <p>Crea el primer autor para comenzar a relacionar libros y mantener el catálogo actualizado.</p>
+          <a class="button button--primary" href="{% url 'crear_autor' %}">Crear primer autor</a>
+        </div>
+      {% endif %}
+    </section>
+  </section>
+{% endblock %}

@@ -1,0 +1,134 @@
+{% extends "gestion/base.html" %}
+
+{% block title %}Inicio | Biblioteca Nexus{% endblock %}
+{% block nav_inicio_class %}is-active{% endblock %}
+{% block hero_badge %}Centro principal{% endblock %}
+{% block hero_title %}Todo el catálogo editorial en un punto de entrada claro{% endblock %}
+{% block hero_description %}Usa esta portada para entrar al módulo de autores o libros, revisar el estado del sistema y continuar con las acciones principales sin perder contexto.{% endblock %}
+
+{% block hero_inline_actions %}
+  <div class="hero__inline-actions">
+    <a class="button button--primary" href="{% url 'lista_autores' %}">Ir a autores</a>
+    <a class="button button--secondary button--secondary-dark" href="{% url 'lista_libros' %}">Ir a libros</a>
+  </div>
+{% endblock %}
+
+{% block hero_aside %}
+  <div class="hero__panel">
+    <p class="hero__panel-label">Atajos del sistema</p>
+    <div class="hero__panel-actions">
+      <a class="button button--secondary" href="{% url 'crear_autor' %}">Crear autor</a>
+      <a class="button button--primary" href="{% url 'crear_libro' %}">Crear libro</a>
+    </div>
+    <div class="hero__panel-meta">
+      <span>{{ total_autores }} autores</span>
+      <span>{{ total_libros }} libros</span>
+    </div>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <section class="stack">
+    <div class="stats-grid stats-grid--triple">
+      <article class="stat-card">
+        <span class="stat-card__label">Autores</span>
+        <strong>{{ total_autores }}</strong>
+        <p>Personas registradas en el catálogo.</p>
+      </article>
+      <article class="stat-card">
+        <span class="stat-card__label">Libros</span>
+        <strong>{{ total_libros }}</strong>
+        <p>Obras disponibles para consulta y edición.</p>
+      </article>
+      <article class="stat-card">
+        <span class="stat-card__label">Autores con libros</span>
+        <strong>{{ autores_con_libros }}</strong>
+        <p>Relaciones activas entre ambos módulos.</p>
+      </article>
+    </div>
+
+    <section class="hub-grid">
+      <article class="hub-card">
+        <div class="hub-card__copy">
+          <span class="section-kicker">Módulo 01</span>
+          <h2>Autores</h2>
+          <p>Consulta el listado, crea registros nuevos y administra la información biográfica desde una sola vista.</p>
+        </div>
+        <div class="hub-card__actions">
+          <a class="button button--primary" href="{% url 'lista_autores' %}">Abrir autores</a>
+          <a class="button button--ghost" href="{% url 'crear_autor' %}">Crear autor</a>
+        </div>
+      </article>
+
+      <article class="hub-card">
+        <div class="hub-card__copy">
+          <span class="section-kicker">Módulo 02</span>
+          <h2>Libros</h2>
+          <p>Ingresa al catálogo editorial, administra ISBN, autor y género, y mantén el inventario listo para consulta.</p>
+        </div>
+        <div class="hub-card__actions">
+          <a class="button button--primary" href="{% url 'lista_libros' %}">Abrir libros</a>
+          <a class="button button--ghost" href="{% url 'crear_libro' %}">Crear libro</a>
+        </div>
+      </article>
+    </section>
+
+    <section class="panel">
+      <div class="panel__header">
+        <div>
+          <span class="section-kicker">Vista rápida</span>
+          <h2>Resumen operativo</h2>
+          <p>Un vistazo corto para entrar al flujo correcto sin pasar primero por listados vacíos o saturados.</p>
+        </div>
+      </div>
+
+      {% if catalogo_vacio %}
+        <div class="empty-state">
+          <span class="badge badge--eyebrow">Primeros pasos</span>
+          <h3>El catálogo aún está vacío</h3>
+          <p>Empieza creando un autor y luego registra sus libros para activar el flujo completo del sistema.</p>
+          <div class="table-actions">
+            <a class="button button--primary" href="{% url 'crear_autor' %}">Crear primer autor</a>
+            <a class="button button--ghost" href="{% url 'crear_libro' %}">Crear primer libro</a>
+          </div>
+        </div>
+      {% else %}
+        <div class="overview-grid">
+          <article class="overview-panel">
+            <div class="overview-panel__header">
+              <span class="section-kicker">Autores destacados</span>
+              <a class="text-link" href="{% url 'lista_autores' %}">Ver todos</a>
+            </div>
+            <ul class="overview-list">
+              {% for autor in autores_destacados %}
+                <li>
+                  <strong>{{ autor.nombre }}</strong>
+                  <span>{{ autor.nacionalidad }}</span>
+                </li>
+              {% empty %}
+                <li class="overview-list__empty">Todavía no hay autores destacados.</li>
+              {% endfor %}
+            </ul>
+          </article>
+
+          <article class="overview-panel">
+            <div class="overview-panel__header">
+              <span class="section-kicker">Libros destacados</span>
+              <a class="text-link" href="{% url 'lista_libros' %}">Ver todos</a>
+            </div>
+            <ul class="overview-list">
+              {% for libro in libros_destacados %}
+                <li>
+                  <strong>{{ libro.titulo }}</strong>
+                  <span>{{ libro.autor.nombre }}</span>
+                </li>
+              {% empty %}
+                <li class="overview-list__empty">Todavía no hay libros destacados.</li>
+              {% endfor %}
+            </ul>
+          </article>
+        </div>
+      {% endif %}
+    </section>
+  </section>
+{% endblock %}
