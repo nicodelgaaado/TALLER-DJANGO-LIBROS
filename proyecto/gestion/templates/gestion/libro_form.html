@@ -1,0 +1,73 @@
+{% extends "gestion/base.html" %}
+
+{% block title %}
+  {% if form.instance.pk %}Editar libro{% else %}Crear libro{% endif %} | Biblioteca Nexus
+{% endblock %}
+{% block nav_libros_class %}is-active{% endblock %}
+{% block hero_title %}
+  {% if form.instance.pk %}Editar libro{% else %}Registrar nuevo libro{% endif %}
+{% endblock %}
+{% block hero_description %}
+  Captura la obra, el autor asociado y los metadatos editoriales desde un formulario ordenado y listo para móvil.
+{% endblock %}
+
+{% block content %}
+  <section class="form-layout">
+    <article class="panel panel--form">
+      <div class="panel__header panel__header--compact">
+        <div>
+          <span class="section-kicker">Formulario</span>
+          <h2>{% if form.instance.pk %}Actualiza la ficha del libro{% else %}Ingresa un nuevo libro{% endif %}</h2>
+          <p>El ISBN debe ser único y el autor debe existir previamente en el catálogo.</p>
+        </div>
+      </div>
+
+      <form method="post" class="crud-form">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <div class="alert alert--error">
+            {% for error in form.non_field_errors %}
+              <div>{{ error }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <div class="field-grid">
+          {% for field in form %}
+            <div class="field-wrapper {% if field.name == 'titulo' %}field-wrapper--full{% endif %}">
+              <label class="field-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {{ field }}
+              {% if field.help_text %}
+                <p class="field-help">{{ field.help_text }}</p>
+              {% endif %}
+              {% if field.errors %}
+                <ul class="field-errors">
+                  {% for error in field.errors %}
+                    <li>{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="form-actions">
+          <button class="button button--primary" type="submit">Guardar libro</button>
+          <a class="button button--secondary" href="{% url 'lista_libros' %}">Cancelar</a>
+        </div>
+      </form>
+    </article>
+
+    <aside class="info-card">
+      <span class="badge badge--soft">Control editorial</span>
+      <h3>Antes de guardar</h3>
+      <p>Verifica el ISBN y relaciona el libro con un autor existente para mantener consistencia en la base de datos.</p>
+      <ul class="info-list">
+        <li>El título debe ser reconocible.</li>
+        <li>El género ayuda a clasificar el catálogo.</li>
+        <li>La fecha de publicación mejora la consulta histórica.</li>
+      </ul>
+    </aside>
+  </section>
+{% endblock %}
