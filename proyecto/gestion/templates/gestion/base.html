@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Biblioteca Nexus{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Literata:opsz,wght@7..72,500;7..72,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'gestion/css/estilos.css' %}">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <nav class="topbar">
+        <a class="brand-mark" href="{% url 'lista_autores' %}">
+          <span class="brand-mark__eyebrow">Gestion editorial</span>
+          <strong>Biblioteca Nexus</strong>
+        </a>
+        <div class="topbar__links">
+          <a href="{% url 'lista_autores' %}" class="{% block nav_autores_class %}{% endblock %}">Autores</a>
+          <a href="{% url 'lista_libros' %}" class="{% block nav_libros_class %}{% endblock %}">Libros</a>
+        </div>
+      </nav>
+
+      <section class="hero__content">
+        <div>
+          <span class="badge badge--eyebrow">Paso 9 completado</span>
+          <h1>{% block hero_title %}Administra autores y libros desde una sola vista{% endblock %}</h1>
+          <p>{% block hero_description %}CRUD visual, limpio y responsivo para la aplicación de gestión de libros.{% endblock %}</p>
+        </div>
+        <div class="hero__panel">
+          <p class="hero__panel-label">Navegación rápida</p>
+          <div class="hero__panel-actions">
+            <a class="button button--secondary" href="{% url 'crear_autor' %}">Nuevo autor</a>
+            <a class="button button--primary" href="{% url 'crear_libro' %}">Nuevo libro</a>
+          </div>
+        </div>
+      </section>
+    </header>
+
+    <main class="content-shell">
+      {% if messages %}
+        <section class="stack">
+          {% for message in messages %}
+            <div class="alert {% if message.tags %}alert--{{ message.tags }}{% endif %}">{{ message }}</div>
+          {% endfor %}
+        </section>
+      {% endif %}
+
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</body>
+</html>
