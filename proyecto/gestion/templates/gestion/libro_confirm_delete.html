@@ -1,0 +1,37 @@
+{% extends "gestion/base.html" %}
+
+{% block title %}Eliminar libro | Biblioteca Nexus{% endblock %}
+{% block nav_libros_class %}is-active{% endblock %}
+{% block hero_title %}Confirmación de eliminación{% endblock %}
+{% block hero_description %}Esta operación eliminará el libro seleccionado del catálogo actual.{% endblock %}
+
+{% block content %}
+  <section class="confirm-shell">
+    <article class="confirm-card">
+      <span class="badge badge--danger">Acción destructiva</span>
+      <h2>¿Eliminar "{{ libro.titulo }}"?</h2>
+      <p>El registro saldrá del listado de libros. Verifica la información antes de confirmar la acción.</p>
+
+      <dl class="confirm-details">
+        <div>
+          <dt>Autor</dt>
+          <dd>{{ libro.autor.nombre }}</dd>
+        </div>
+        <div>
+          <dt>Género</dt>
+          <dd>{{ libro.genero }}</dd>
+        </div>
+        <div>
+          <dt>ISBN</dt>
+          <dd>{{ libro.isbn }}</dd>
+        </div>
+      </dl>
+
+      <form method="post" class="form-actions">
+        {% csrf_token %}
+        <button class="button button--danger" type="submit">Sí, eliminar libro</button>
+        <a class="button button--secondary" href="{% url 'lista_libros' %}">Cancelar</a>
+      </form>
+    </article>
+  </section>
+{% endblock %}

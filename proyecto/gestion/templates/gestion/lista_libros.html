@@ -1,0 +1,79 @@
+{% extends "gestion/base.html" %}
+
+{% block title %}Libros | Biblioteca Nexus{% endblock %}
+{% block nav_libros_class %}is-active{% endblock %}
+{% block hero_title %}Libros registrados{% endblock %}
+{% block hero_description %}Gestiona el catálogo editorial con una tabla clara, filtros visuales y accesos rápidos a cada operación del CRUD.{% endblock %}
+
+{% block content %}
+  <section class="stack">
+    <div class="stats-grid">
+      <article class="stat-card">
+        <span class="stat-card__label">Libros</span>
+        <strong>{{ total_libros }}</strong>
+        <p>Total de obras registradas en el sistema.</p>
+      </article>
+      <article class="stat-card">
+        <span class="stat-card__label">Autores vinculados</span>
+        <strong>{{ total_autores }}</strong>
+        <p>Autores disponibles para nuevas publicaciones.</p>
+      </article>
+    </div>
+
+    <section class="panel">
+      <div class="panel__header">
+        <div>
+          <span class="section-kicker">Catálogo</span>
+          <h2>Libros</h2>
+          <p>Revisa género, autor, fecha de publicación e ISBN desde una sola interfaz adaptable.</p>
+        </div>
+        <a class="button button--primary" href="{% url 'crear_libro' %}">Agregar libro</a>
+      </div>
+
+      {% if libros %}
+        <div class="table-shell">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Título</th>
+                <th>Autor</th>
+                <th>Género</th>
+                <th>Fecha de publicación</th>
+                <th>ISBN</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for libro in libros %}
+                <tr>
+                  <td data-label="Título">
+                    <div class="cell-title">{{ libro.titulo }}</div>
+                  </td>
+                  <td data-label="Autor">{{ libro.autor.nombre }}</td>
+                  <td data-label="Género">
+                    <span class="badge badge--soft">{{ libro.genero }}</span>
+                  </td>
+                  <td data-label="Fecha de publicación">{{ libro.fecha_publicacion|date:"d/m/Y" }}</td>
+                  <td data-label="ISBN"><span class="mono">{{ libro.isbn }}</span></td>
+                  <td data-label="Acciones">
+                    <div class="table-actions">
+                      <a class="button button--ghost" href="{% url 'editar_libro' libro.pk %}">Editar</a>
+                      <a class="button button--danger" href="{% url 'eliminar_libro' libro.pk %}">Eliminar</a>
+                    </div>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="empty-state">
+          <span class="badge badge--eyebrow">Catálogo vacío</span>
+          <h3>No hay libros registrados</h3>
+          <p>Agrega el primer libro para comenzar a construir la biblioteca digital de la aplicación.</p>
+          <a class="button button--primary" href="{% url 'crear_libro' %}">Crear primer libro</a>
+        </div>
+      {% endif %}
+    </section>
+  </section>
+{% endblock %}

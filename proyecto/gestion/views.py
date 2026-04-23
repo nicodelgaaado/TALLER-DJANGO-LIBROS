@@ -1,9 +1,9 @@
-from django.shortcuts import get_object_or_404, redirect, render
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
-from .forms import LibroForm, AutorForm
-from .models import Libro, Autor
+from .forms import AutorForm, LibroForm
+from .models import Autor, Libro
 
 
 # ===== CRUD AUTORES =====
@@ -13,8 +13,16 @@ from .models import Libro, Autor
 # ===== CRUD LIBROS (OSKAR) =====
 def leer_libros(request):
     """Lee y muestra el listado completo de libros."""
-    libros = Libro.objects.all()
-    return render(request, "gestion/lista_libros.html", {"libros": libros})
+    libros = Libro.objects.select_related("autor").all()
+    return render(
+        request,
+        "gestion/lista_libros.html",
+        {
+            "libros": libros,
+            "total_libros": libros.count(),
+            "total_autores": Autor.objects.count(),
+        },
+    )
 
 
 def crear_libro(request):
@@ -23,7 +31,7 @@ def crear_libro(request):
         form = LibroForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect("leer_libros")
+            return redirect("lista_libros")
     else:
         form = LibroForm()
 
@@ -38,7 +46,7 @@ def actualizar_libro(request, pk):
         form = LibroForm(request.POST, instance=libro)
         if form.is_valid():
             form.save()
-            return redirect("leer_libros")
+            return redirect("lista_libros")
     else:
         form = LibroForm(instance=libro)
 
@@ -55,7 +63,7 @@ def eliminar_libro(request, pk):
 
     if request.method == "POST":
         libro.delete()
-        return redirect("leer_libros")
+        return redirect("lista_libros")
 
     return render(
         request,
@@ -74,9 +82,15 @@ editar_libro = actualizar_libro
 class AutorListView(ListView):
     """Lista todos los autores registrados en el sistema."""
     model = Autor
-    template_name = "gestion/autor_list.html"
+    template_name = "gestion/lista_autores.html"
     context_object_name = "autores"
     paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["total_autores"] = Autor.objects.count()
+        context["total_libros"] = Libro.objects.count()
+        return context
 
 
 class AutorCreateView(CreateView):
@@ -84,7 +98,7 @@ class AutorCreateView(CreateView):
     model = Autor
     form_class = AutorForm
     template_name = "gestion/autor_form.html"
-    success_url = reverse_lazy("autor_list")
+    success_url = reverse_lazy("lista_autores")
 
 
 class AutorUpdateView(UpdateView):
@@ -92,11 +106,12 @@ class AutorUpdateView(UpdateView):
     model = Autor
     form_class = AutorForm
     template_name = "gestion/autor_form.html"
-    success_url = reverse_lazy("autor_list")
+    success_url = reverse_lazy("lista_autores")
 
 
 class AutorDeleteView(DeleteView):
     """Permite eliminar un autor del sistema con confirmación."""
     model = Autor
+    context_object_name = "autor"
     template_name = "gestion/autor_confirm_delete.html"
-    success_url = reverse_lazy("autor_list")
+    success_url = reverse_lazy("lista_autores")
