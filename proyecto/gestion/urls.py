@@ -10,6 +10,7 @@ autor_delete_view = views.AutorDeleteView.as_view()
 
 
 urlpatterns = [
+    path("", views.inicio, name="inicio"),
     path("libros/", views.leer_libros, name="leer_libros"),
     path("libros/", views.leer_libros, name="lista_libros"),
     path("libros/crear/", views.crear_libro, name="crear_libro"),

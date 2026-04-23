@@ -23,12 +23,22 @@ class GestionTemplatesTests(TestCase):
         )
 
     def test_reversa_nombres_canonicos_y_legacy(self):
+        self.assertEqual(reverse("inicio"), "/")
         self.assertEqual(reverse("lista_autores"), reverse("autor_list"))
         self.assertEqual(reverse("crear_autor"), reverse("autor_create"))
         self.assertEqual(reverse("editar_autor", args=[self.autor.pk]), reverse("autor_update", args=[self.autor.pk]))
         self.assertEqual(reverse("eliminar_autor", args=[self.autor.pk]), reverse("autor_delete", args=[self.autor.pk]))
         self.assertEqual(reverse("lista_libros"), reverse("leer_libros"))
         self.assertEqual(reverse("editar_libro", args=[self.libro.pk]), reverse("actualizar_libro", args=[self.libro.pk]))
+
+    def test_inicio_usa_template_principal(self):
+        respuesta = self.client.get(reverse("inicio"))
+
+        self.assertEqual(respuesta.status_code, 200)
+        self.assertTemplateUsed(respuesta, "gestion/inicio.html")
+        self.assertContains(respuesta, "Centro principal")
+        self.assertContains(respuesta, reverse("lista_autores"))
+        self.assertContains(respuesta, reverse("lista_libros"))
 
     def test_listados_usan_templates_esperados(self):
         respuesta_autores = self.client.get(reverse("lista_autores"))

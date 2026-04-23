@@ -6,6 +6,27 @@ from .forms import AutorForm, LibroForm
 from .models import Autor, Libro
 
 
+def _build_catalog_metrics():
+    total_autores = Autor.objects.count()
+    total_libros = Libro.objects.count()
+    return {
+        "total_autores": total_autores,
+        "total_libros": total_libros,
+        "autores_con_libros": Autor.objects.filter(libros__isnull=False).distinct().count(),
+        "catalogo_vacio": total_autores == 0 and total_libros == 0,
+    }
+
+
+def inicio(request):
+    """Renderiza la portada principal para navegar entre autores y libros."""
+    context = {
+        **_build_catalog_metrics(),
+        "autores_destacados": Autor.objects.order_by("nombre")[:3],
+        "libros_destacados": Libro.objects.select_related("autor").order_by("titulo")[:4],
+    }
+    return render(request, "gestion/inicio.html", context)
+
+
 # ===== CRUD AUTORES =====
 # Mantener en esta seccion el CRUD existente de Autor.
 
@@ -19,8 +40,7 @@ def leer_libros(request):
         "gestion/lista_libros.html",
         {
             "libros": libros,
-            "total_libros": libros.count(),
-            "total_autores": Autor.objects.count(),
+            **_build_catalog_metrics(),
         },
     )
 
@@ -88,8 +108,7 @@ class AutorListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["total_autores"] = Autor.objects.count()
-        context["total_libros"] = Libro.objects.count()
+        context.update(_build_catalog_metrics())
         return context
 
 
